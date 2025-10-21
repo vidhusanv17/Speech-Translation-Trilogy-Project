@@ -1,0 +1,172 @@
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Mic, MicOff, Download, Loader2, Activity, Maximize2, Minimize2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function ControlPanel({ 
+  isListening, 
+  onToggleListening, 
+  onExport,
+  onToggleDraggable,
+  latency,
+  isTranslating,
+  isDarkMode,
+  hasHistory,
+  showDraggableCaption
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className="mb-8"
+    >
+      <div className={`rounded-3xl backdrop-blur-2xl border p-6 md:p-8 ${
+        isDarkMode 
+          ? 'bg-white/5 border-white/10 shadow-2xl shadow-purple-500/10' 
+          : 'bg-white/60 border-purple-200/30 shadow-2xl shadow-purple-500/20'
+      }`}>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Main Control Button */}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full md:w-auto"
+          >
+            <Button
+              onClick={onToggleListening}
+              size="lg"
+              className={`relative h-14 px-8 rounded-2xl font-semibold text-base shadow-lg overflow-hidden w-full md:w-auto ${
+                isListening
+                  ? 'bg-gradient-to-r from-red-500 via-pink-500 to-red-600 hover:from-red-600 hover:via-pink-600 hover:to-red-700 shadow-red-500/50'
+                  : 'bg-gradient-to-r from-purple-500 via-purple-600 to-blue-600 hover:from-purple-600 hover:via-purple-700 hover:to-blue-700 shadow-purple-500/50'
+              } text-white border-0`}
+            >
+              <span className="relative z-10 flex items-center gap-3">
+                {isListening ? (
+                  <>
+                    <MicOff className="w-5 h-5" />
+                    Stop Translation
+                  </>
+                ) : (
+                  <>
+                    <Mic className="w-5 h-5" />
+                    Start Translation
+                  </>
+                )}
+              </span>
+              {isListening && (
+                <>
+                  <motion.div
+                    className="absolute inset-0 bg-white/20"
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.5, 0, 0.5],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  <motion.div
+                    className="absolute -right-2 -top-2 w-4 h-4 bg-white rounded-full"
+                    animate={{
+                      scale: [1, 1.3, 1],
+                    }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                    }}
+                  />
+                </>
+              )}
+            </Button>
+          </motion.div>
+
+          {/* Status & Controls */}
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-4 w-full md:w-auto">
+            {/* Latency Indicator */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className={`flex items-center gap-3 px-4 py-2 rounded-xl backdrop-blur-xl border ${
+                isDarkMode 
+                  ? 'bg-white/5 border-white/10' 
+                  : 'bg-white/40 border-purple-200/50'
+              }`}
+            >
+              <Activity className={`w-4 h-4 ${
+                latency < 800 ? 'text-green-500' : 'text-yellow-500'
+              }`} />
+              <div className={`text-sm ${
+                isDarkMode ? 'text-white' : 'text-slate-900'
+              }`}>
+                <span className="font-medium">{latency}</span>
+                <span className="opacity-60 ml-1">ms</span>
+              </div>
+            </motion.div>
+
+            {/* Translation Status */}
+            <AnimatePresence>
+              {isTranslating && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl backdrop-blur-xl border ${
+                    isDarkMode 
+                      ? 'bg-purple-500/20 border-purple-500/30' 
+                      : 'bg-purple-100 border-purple-300/50'
+                  }`}
+                >
+                  <Loader2 className={`w-4 h-4 animate-spin ${
+                    isDarkMode ? 'text-purple-300' : 'text-purple-600'
+                  }`} />
+                  <span className={`text-sm font-medium ${
+                    isDarkMode ? 'text-purple-200' : 'text-purple-700'
+                  }`}>
+                    Translating
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Draggable Toggle */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onToggleDraggable}
+                className={`rounded-xl backdrop-blur-xl border ${
+                  isDarkMode 
+                    ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' 
+                    : 'bg-white/40 border-purple-200/50 text-slate-900 hover:bg-white/60'
+                } ${showDraggableCaption ? 'ring-2 ring-purple-500/50' : ''}`}
+              >
+                {showDraggableCaption ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              </Button>
+            </motion.div>
+
+            {/* Export Button */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="ghost"
+                onClick={onExport}
+                disabled={!hasHistory}
+                className={`gap-2 rounded-xl backdrop-blur-xl border ${
+                  isDarkMode 
+                    ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' 
+                    : 'bg-white/40 border-purple-200/50 text-slate-900 hover:bg-white/60'
+                } disabled:opacity-40`}
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">Export</span>
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}

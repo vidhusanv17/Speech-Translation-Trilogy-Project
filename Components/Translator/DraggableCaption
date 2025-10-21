@@ -1,0 +1,98 @@
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { X, GripVertical } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export default function DraggableCaption({ translatedText, interimText, isDarkMode, onClose }) {
+  const [position, setPosition] = useState({ x: window.innerWidth / 2 - 200, y: 50 });
+
+  return (
+    <motion.div
+      drag
+      dragMomentum={false}
+      dragElastic={0}
+      onDrag={(e, info) => {
+        setPosition({
+          x: info.point.x - 200,
+          y: info.point.y - 25,
+        });
+      }}
+      initial={{ opacity: 0, scale: 0.8, y: -50 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.8, y: -50 }}
+      style={{
+        position: 'fixed',
+        left: position.x,
+        top: position.y,
+        zIndex: 9999,
+      }}
+      className={`w-[400px] max-w-[90vw] rounded-3xl backdrop-blur-2xl border shadow-2xl cursor-move ${
+        isDarkMode 
+          ? 'bg-slate-950/95 border-purple-500/30 shadow-purple-500/20' 
+          : 'bg-white/95 border-purple-300/50 shadow-purple-500/30'
+      }`}
+    >
+      <div className={`flex items-center justify-between p-4 border-b ${
+        isDarkMode ? 'border-purple-500/20' : 'border-purple-200/50'
+      }`}>
+        <div className="flex items-center gap-2">
+          <GripVertical className={`w-5 h-5 ${
+            isDarkMode ? 'text-purple-400' : 'text-purple-600'
+          }`} />
+          <span className={`text-sm font-semibold ${
+            isDarkMode ? 'text-white' : 'text-slate-900'
+          }`}>
+            Live Caption
+          </span>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          className={`rounded-xl ${
+            isDarkMode 
+              ? 'hover:bg-white/10 text-white' 
+              : 'hover:bg-gray-100 text-slate-900'
+          }`}
+        >
+          <X className="w-4 h-4" />
+        </Button>
+      </div>
+
+      <div className="p-6 min-h-[100px] max-h-[300px] overflow-y-auto">
+        {(translatedText || interimText) ? (
+          <div className="space-y-3">
+            {translatedText && (
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`text-lg font-medium leading-relaxed ${
+                  isDarkMode ? 'text-white' : 'text-slate-900'
+                }`}
+              >
+                {translatedText}
+              </motion.p>
+            )}
+            {interimText && !translatedText && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className={`text-lg leading-relaxed ${
+                  isDarkMode ? 'text-white/60' : 'text-slate-600'
+                } italic`}
+              >
+                {interimText}
+              </motion.p>
+            )}
+          </div>
+        ) : (
+          <p className={`text-center ${
+            isDarkMode ? 'text-purple-300/50' : 'text-purple-600/50'
+          }`}>
+            Waiting for translation...
+          </p>
+        )}
+      </div>
+    </motion.div>
+  );
+}

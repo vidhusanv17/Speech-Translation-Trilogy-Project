@@ -1,0 +1,126 @@
+import React from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowRight, Globe } from "lucide-react";
+import { motion } from "framer-motion";
+
+const LANGUAGES = [
+  { code: "en-US", name: "English", flag: "🇺🇸" },
+  { code: "es-ES", name: "Spanish", flag: "🇪🇸" },
+  { code: "fr-FR", name: "French", flag: "🇫🇷" },
+  { code: "de-DE", name: "German", flag: "🇩🇪" },
+  { code: "it-IT", name: "Italian", flag: "🇮🇹" },
+  { code: "pt-PT", name: "Portuguese", flag: "🇵🇹" },
+  { code: "ru-RU", name: "Russian", flag: "🇷🇺" },
+  { code: "ja-JP", name: "Japanese", flag: "🇯🇵" },
+  { code: "ko-KR", name: "Korean", flag: "🇰🇷" },
+  { code: "zh-CN", name: "Chinese", flag: "🇨🇳" },
+  { code: "ar-SA", name: "Arabic", flag: "🇸🇦" },
+  { code: "hi-IN", name: "Hindi", flag: "🇮🇳" },
+  { code: "nl-NL", name: "Dutch", flag: "🇳🇱" },
+  { code: "pl-PL", name: "Polish", flag: "🇵🇱" },
+  { code: "tr-TR", name: "Turkish", flag: "🇹🇷" },
+];
+
+export default function LanguageSelector({ 
+  sourceLanguage, 
+  targetLanguage, 
+  onSourceChange, 
+  onTargetChange,
+  isDarkMode 
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className={`rounded-3xl backdrop-blur-2xl border p-6 md:p-8 ${
+        isDarkMode 
+          ? 'bg-white/5 border-white/10 shadow-2xl shadow-purple-500/10' 
+          : 'bg-white/60 border-purple-200/30 shadow-2xl shadow-purple-500/20'
+      }`}
+    >
+      <div className="flex items-center gap-3 mb-6">
+        <Globe className={`w-5 h-5 ${
+          isDarkMode ? 'text-purple-400' : 'text-purple-600'
+        }`} />
+        <h3 className={`text-lg font-semibold ${
+          isDarkMode ? 'text-white' : 'text-slate-900'
+        }`}>
+          Language Settings
+        </h3>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+        <div className="space-y-3">
+          <label className={`text-sm font-medium block ${
+            isDarkMode ? 'text-purple-300' : 'text-purple-700'
+          }`}>
+            From
+          </label>
+          <Select value={sourceLanguage} onValueChange={onSourceChange}>
+            <SelectTrigger className={`h-12 rounded-xl backdrop-blur-xl border ${
+              isDarkMode 
+                ? 'bg-white/5 border-white/10 text-white' 
+                : 'bg-white/80 border-purple-200/50'
+            }`}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {LANGUAGES.map((lang) => (
+                <SelectItem key={lang.code} value={lang.code}>
+                  <span className="flex items-center gap-3">
+                    <span className="text-xl">{lang.flag}</span>
+                    <span>{lang.name}</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex justify-center">
+          <motion.div
+            animate={{ x: [0, 5, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className={`p-4 rounded-2xl backdrop-blur-xl border ${
+              isDarkMode 
+                ? 'bg-gradient-to-r from-purple-500/20 to-blue-500/20 border-purple-500/30' 
+                : 'bg-gradient-to-r from-purple-100 to-blue-100 border-purple-300/50'
+            }`}
+          >
+            <ArrowRight className={`w-6 h-6 ${
+              isDarkMode ? 'text-purple-300' : 'text-purple-600'
+            }`} />
+          </motion.div>
+        </div>
+
+        <div className="space-y-3">
+          <label className={`text-sm font-medium block ${
+            isDarkMode ? 'text-purple-300' : 'text-purple-700'
+          }`}>
+            To
+          </label>
+          <Select value={targetLanguage} onValueChange={onTargetChange}>
+            <SelectTrigger className={`h-12 rounded-xl backdrop-blur-xl border ${
+              isDarkMode 
+                ? 'bg-white/5 border-white/10 text-white' 
+                : 'bg-white/80 border-purple-200/50'
+            }`}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {LANGUAGES.map((lang) => (
+                <SelectItem key={lang.code} value={lang.code}>
+                  <span className="flex items-center gap-3">
+                    <span className="text-xl">{lang.flag}</span>
+                    <span>{lang.name}</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
